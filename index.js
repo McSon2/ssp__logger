@@ -9,7 +9,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Remplacez par votre domaine si nécessaire
+    origin: "https://ssploggerdashboard-ssplogger.up.railway.app", // Remplacez par votre domaine
+    methods: ["GET", "POST"],
   },
 });
 const PORT = process.env.PORT || 3000;
@@ -30,7 +31,11 @@ function broadcastNewLog(logEntry) {
 app.use(express.json());
 
 // Ajouter le middleware CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://ssploggerdashboard-ssplogger.up.railway.app", // Remplacez par votre domaine
+  })
+);
 
 // Configurer la base de données avec Sequelize
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
