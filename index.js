@@ -10,6 +10,10 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const PORT = process.env.PORT || 3000;
 
+wss.on("listening", () => {
+  console.log(`WebSocket server is listening on port ${PORT}`);
+});
+
 wss.on("connection", (ws) => {
   console.log("Client connected");
   ws.on("message", (message) => {
@@ -154,6 +158,6 @@ app.delete("/api/logs", async (req, res) => {
 });
 
 // Démarrer le serveur
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`HTTP server started on port ${PORT}`);
 });
