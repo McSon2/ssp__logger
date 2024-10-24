@@ -3,41 +3,43 @@ const express = require("express");
 const cors = require("cors");
 const { Sequelize, DataTypes } = require("sequelize");
 const http = require("http");
-const { Server } = require("socket.io");
+const WebSocket = require("ws");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "https://ssploggerdashboard-ssplogger.up.railway.app", // Remplacez par votre domaine
-    methods: ["GET", "POST"],
-  },
-});
+const wss = new WebSocket.Server({ server });
 const PORT = process.env.PORT || 3000;
 
-io.on("connection", (socket) => {
-  console.log("Client connected");
+wss.on("listening", () => {
+  console.log(`WebSocket server is listening on port ${PORT}`);
+});
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
+wss.on("connection", (ws) => {
+  console.log("Client connected");
+  ws.on("message", (message) => {
+    console.log(`Received message: ${message}`);
   });
 });
 
+wss.clients.forEach((client) => {
+  if (client.readyState === WebSocket.OPEN) {
+    client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
+  }
+});
+
 function broadcastNewLog(logEntry) {
-  io.emit("NEW_LOG", logEntry);
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
+    }
+  });
 }
 
 // Middleware pour parser le JSON
 app.use(express.json());
 
 // Ajouter le middleware CORS
-app.use(
-  cors({
-    origin: "*", // Autorise toutes les origines, à restreindre en production
-    methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  })
-);
+app.use(cors());
 
 // Configurer la base de données avec Sequelize
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
