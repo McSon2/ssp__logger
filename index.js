@@ -26,8 +26,11 @@ const Log = sequelize.define("Log", {
     allowNull: false,
   },
   message: {
-    type: DataTypes.TEXT,
+    type: DataTypes.TEXT, // Assurez-vous que c'est TEXT pour des messages longs
     allowNull: false,
+  },
+  details: {
+    type: DataTypes.JSONB, // Pour stocker des objets JSON
   },
   timestamp: {
     type: DataTypes.DATE,
@@ -40,10 +43,9 @@ const Log = sequelize.define("Log", {
     type: DataTypes.STRING,
   },
   stakeUsername: {
-    // Nouveau champ
     type: DataTypes.STRING,
-    allowNull: false,
   },
+  // Autres champs si nécessaire
 });
 
 // Synchroniser la base de données
