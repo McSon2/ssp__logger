@@ -85,7 +85,23 @@ app.post("/api/logs", async (req, res) => {
 // Route pour récupérer les logs
 app.get("/api/logs", async (req, res) => {
   try {
-    const logs = await Log.findAll({ order: [["timestamp", "DESC"]] });
+    const { stakeUsername, level, limit, offset } = req.query;
+
+    const whereClause = {};
+    if (stakeUsername) {
+      whereClause.stakeUsername = stakeUsername;
+    }
+    if (level) {
+      whereClause.level = level;
+    }
+
+    const logs = await Log.findAll({
+      where: whereClause,
+      order: [["timestamp", "DESC"]],
+      limit: limit ? parseInt(limit) : 100,
+      offset: offset ? parseInt(offset) : 0,
+    });
+
     res.json(logs);
   } catch (error) {
     console.error("Erreur lors de la récupération des logs :", error);
