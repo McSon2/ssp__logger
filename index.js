@@ -39,11 +39,16 @@ const Log = sequelize.define("Log", {
   platform: {
     type: DataTypes.STRING,
   },
+  stakeUsername: {
+    // Nouveau champ
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 // Synchroniser la base de données
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then(() => {
     console.log("Base de données synchronisée");
   })
@@ -62,7 +67,14 @@ app.get("/", (req, res) => {
 // Route pour recevoir les logs
 app.post("/api/logs", async (req, res) => {
   try {
-    const logEntry = await Log.create(req.body);
+    const logEntry = await Log.create({
+      level: req.body.level,
+      message: req.body.message,
+      timestamp: req.body.timestamp,
+      appVersion: req.body.appVersion,
+      platform: req.body.platform,
+      stakeUsername: req.body.stakeUsername, // Inclure stakeUsername
+    });
     res.status(201).json(logEntry);
   } catch (error) {
     console.error("Erreur lors de la création du log :", error);
