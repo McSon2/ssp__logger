@@ -1,5 +1,6 @@
 // index.js
 const express = require("express");
+const cors = require("cors"); // Ajoutez ceci
 const { Sequelize, DataTypes } = require("sequelize");
 
 const app = express();
@@ -7,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware pour parser le JSON
 app.use(express.json());
+
+// Ajouter le middleware CORS
+app.use(cors());
 
 // Configurer la base de données avec Sequelize
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
