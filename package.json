@@ -1,0 +1,15 @@
+{
+  "name": "electron-log-backend",
+  "version": "1.0.0",
+  "description": "Backend pour collecter les logs de l'application Electron",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sequelize": "^6.21.0",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4"
+  }
+}
