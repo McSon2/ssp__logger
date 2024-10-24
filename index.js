@@ -10,11 +10,26 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const PORT = process.env.PORT || 3000;
 
+wss.on("connection", (ws) => {
+  console.log("Client connected");
+  ws.on("message", (message) => {
+    console.log(`Received message: ${message}`);
+  });
+});
+
 wss.clients.forEach((client) => {
   if (client.readyState === WebSocket.OPEN) {
     client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
   }
 });
+
+function broadcastNewLog(logEntry) {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
+    }
+  });
+}
 
 // Middleware pour parser le JSON
 app.use(express.json());
@@ -90,6 +105,7 @@ app.post("/api/logs", async (req, res) => {
       stakeUsername: req.body.stakeUsername,
     });
     res.status(201).json(logEntry);
+    broadcastNewLog(logEntry);
   } catch (error) {
     console.error("Erreur lors de la création du log :", error);
     res.status(500).json({ error: "Erreur lors de la création du log" });
