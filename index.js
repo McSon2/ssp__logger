@@ -116,6 +116,20 @@ app.get("/api/logs", async (req, res) => {
   }
 });
 
+// Route pour supprimer tous les logs
+app.delete("/api/logs", async (req, res) => {
+  try {
+    await Log.destroy({
+      where: {},
+      truncate: true, // Utilise truncate pour une suppression rapide et réinitialise les identifiants auto-incrémentés
+    });
+    res.status(200).json({ message: "Tous les logs ont été supprimés." });
+  } catch (error) {
+    console.error("Erreur lors de la suppression des logs :", error);
+    res.status(500).json({ error: "Erreur lors de la suppression des logs" });
+  }
+});
+
 // Démarrer le serveur
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
