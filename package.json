@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2",
+    "express": "^4.21.1",
+    "http": "^0.0.1-security",
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.21.0"
+    "sequelize": "^6.21.0",
+    "ws": "^8.18.0"
   }
 }

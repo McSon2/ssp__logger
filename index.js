@@ -1,10 +1,20 @@
 // index.js
 const express = require("express");
-const cors = require("cors"); // Ajoutez ceci
+const cors = require("cors");
 const { Sequelize, DataTypes } = require("sequelize");
+const http = require("http");
+const WebSocket = require("ws");
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 const PORT = process.env.PORT || 3000;
+
+wss.clients.forEach((client) => {
+  if (client.readyState === WebSocket.OPEN) {
+    client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
+  }
+});
 
 // Middleware pour parser le JSON
 app.use(express.json());
@@ -59,10 +69,7 @@ sequelize
     console.log("Base de données synchronisée");
   })
   .catch((error) => {
-    console.error(
-      "Erreur lors de la synchronisation de la base de données :",
-      error
-    );
+    console.error("Erreur lors de la synchronisation de la base de données :", error);
   });
 
 // Route de base
