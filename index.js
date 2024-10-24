@@ -33,7 +33,9 @@ app.use(express.json());
 // Ajouter le middleware CORS
 app.use(
   cors({
-    origin: "https://ssploggerdashboard-ssplogger.up.railway.app", // Remplacez par votre domaine
+    origin: "*", // Autorise toutes les origines, à restreindre en production
+    methods: ["GET", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type"],
   })
 );
 
