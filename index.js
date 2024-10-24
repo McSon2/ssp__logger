@@ -72,10 +72,11 @@ app.post("/api/logs", async (req, res) => {
     const logEntry = await Log.create({
       level: req.body.level,
       message: req.body.message,
+      details: req.body.details, // Ajoutez ceci
       timestamp: req.body.timestamp,
       appVersion: req.body.appVersion,
       platform: req.body.platform,
-      stakeUsername: req.body.stakeUsername, // Inclure stakeUsername
+      stakeUsername: req.body.stakeUsername,
     });
     res.status(201).json(logEntry);
   } catch (error) {
