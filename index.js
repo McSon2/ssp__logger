@@ -3,36 +3,27 @@ const express = require("express");
 const cors = require("cors");
 const { Sequelize, DataTypes } = require("sequelize");
 const http = require("http");
-const WebSocket = require("ws");
+const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Remplacez par votre domaine si nécessaire
+  },
+});
 const PORT = process.env.PORT || 3000;
 
-wss.on("listening", () => {
-  console.log(`WebSocket server is listening on port ${PORT}`);
-});
-
-wss.on("connection", (ws) => {
+io.on("connection", (socket) => {
   console.log("Client connected");
-  ws.on("message", (message) => {
-    console.log(`Received message: ${message}`);
-  });
-});
 
-wss.clients.forEach((client) => {
-  if (client.readyState === WebSocket.OPEN) {
-    client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
-  }
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
 });
 
 function broadcastNewLog(logEntry) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({ type: "NEW_LOG", data: logEntry }));
-    }
-  });
+  io.emit("NEW_LOG", logEntry);
 }
 
 // Middleware pour parser le JSON
